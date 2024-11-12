@@ -165,6 +165,40 @@ public class ZeroSquaresGame {
 return null;
     }
 
+    Map<String, Object> SearchAlgDfs(ZerosSquareState initialState) {
+        Stack<ZerosSquareState> stack = new Stack<ZerosSquareState>();
+        Set<ZerosSquareState> visited = new HashSet<ZerosSquareState>();
+        Map<ZerosSquareState, ZerosSquareState> parent = new HashMap<>();
+
+        stack.add(initialState);
+        visited.add(initialState);
+        parent.put(initialState, null);
+
+        while (!stack.isEmpty()) {
+            ZerosSquareState current = stack.pop();
+
+            if (current.gameDone()) {
+
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("path", getSuccessPath(current, parent));
+                result.put("visitedCount", visited.size());
+                return result;
+
+
+            }
+
+            for (ZerosSquareState next : current.nextStates()) {
+                if (!visited.contains(next)) {
+                    visited.add(next);
+                    stack.push(next);
+                    parent.put(next, current);
+                }
+            }
+        }
+        return null;
+    }
+
 
     List<ZerosSquareState> getSuccessPath(ZerosSquareState gameDoneState, Map<ZerosSquareState, ZerosSquareState> parents) {
         List<ZerosSquareState> pathWin = new ArrayList<ZerosSquareState>();

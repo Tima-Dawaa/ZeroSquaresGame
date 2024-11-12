@@ -303,8 +303,8 @@ public class ZerosSquareState {
         return true;
     }
 
-    List<ZerosSquareState> nextStates() {
-        List<ZerosSquareState> nextStates = new ArrayList<ZerosSquareState>();
+    Set<ZerosSquareState> nextStates() {
+        Set<ZerosSquareState> nextStates = new HashSet<ZerosSquareState>();
 
         for (int i = 0; i < direction.size(); i++) {
             ZerosSquareState newState = this.move(direction.get(i));
@@ -314,7 +314,7 @@ public class ZerosSquareState {
 
         }
 //        System.out.println(nextStates.size());
-        return nextStates;
+        return  nextStates;
     }
 
 
@@ -340,11 +340,10 @@ public class ZerosSquareState {
         return isLoss == ((ZerosSquareState) o).isLoss;
     }
 
+
     @Override
     public int hashCode() {
-        int result = Objects.hash(players, isLoss, sortPlayers, nextStates, direction);
-        result = 31 * result + Arrays.hashCode(grid);
-        return result;
+        return Objects.hash(Arrays.deepHashCode(grid), players, isLoss, sortPlayers, nextStates, direction);
     }
 
     ZerosSquareState deepCopy() {

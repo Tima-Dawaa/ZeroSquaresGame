@@ -9,23 +9,23 @@ public class Main {
 
 
         ZeroSquaresGame start = new ZeroSquaresGame();
-        Cell[][] initialGrid = start.levels.get(start.currentLevel);
-        List<ZerosSquarePlayers> initialPlayers = start.levelPlayers.get(start.currentLevel);
+        Cell[][] initialGrid = start.levels.get(start.currentLevel+5);
+        List<ZerosSquarePlayers> initialPlayers = start.levelPlayers.get(start.currentLevel+5);
 
         ZerosSquareState initialState = new ZerosSquareState(initialGrid, initialPlayers);
 
-        Map<String, Object> bfsResult = start.SearchAlgBfs(initialState);
+        Map<String, Object> result = start.SearchAlgDfs(initialState);
 
-        if (bfsResult != null) {
+        if (result != null) {
 
 
-            List<ZerosSquareState> path = (List<ZerosSquareState>) bfsResult.get("path");
+            List<ZerosSquareState> path = (List<ZerosSquareState>) result.get("path");
             for (ZerosSquareState state : path) {
                 state.print();
                 System.out.println();
             }
-            System.out.println("Length of Success Path : "+ ((List<ZerosSquareState>) bfsResult.get("path")).size());
-            System.out.println("Visited Nodes Count: " + bfsResult.get("visitedCount"));
+            System.out.println("Length of Success Path : "+ ((List<ZerosSquareState>) result.get("path")).size());
+            System.out.println("Visited Nodes Count: " + result.get("visitedCount"));
         }
     }
 }
