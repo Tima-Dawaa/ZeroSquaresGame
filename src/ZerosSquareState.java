@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ZerosSquareState {
     Cell[][] grid;
@@ -112,9 +109,7 @@ public class ZerosSquareState {
 
 
         }
-        for (ZerosSquarePlayers player : sortedPlayers) {
-            System.out.println(player.color);
-        }
+
         return sortedPlayers;
     }
 
@@ -314,11 +309,11 @@ public class ZerosSquareState {
         for (int i = 0; i < direction.size(); i++) {
             ZerosSquareState newState = this.move(direction.get(i));
             if (!newState.equals(this)) {
-                    nextStates.add(newState);
-                }
+                nextStates.add(newState);
+            }
 
         }
-        System.out.println(nextStates.size());
+//        System.out.println(nextStates.size());
         return nextStates;
     }
 
@@ -377,4 +372,13 @@ public class ZerosSquareState {
         return newState;
     }
 
+
+
+
+
 }
+
+
+
+
+
