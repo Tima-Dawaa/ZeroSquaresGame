@@ -9,12 +9,12 @@ public class Main {
 
 
         ZeroSquaresGame start = new ZeroSquaresGame();
-        Cell[][] initialGrid = start.levels.get(start.currentLevel+5);
+        Cell[][] initialGrid = start.levels.get(start.currentLevel);
         List<ZerosSquarePlayers> initialPlayers = start.levelPlayers.get(start.currentLevel+5);
 
         ZerosSquareState initialState = new ZerosSquareState(initialGrid, initialPlayers);
 
-        Map<String, Object> result = start.SearchAlgDfs(initialState);
+        Map<String, Object> result = start.SearchAlgUcs(initialState);
 
         if (result != null) {
 

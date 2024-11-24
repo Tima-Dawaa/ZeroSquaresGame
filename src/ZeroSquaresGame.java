@@ -199,6 +199,44 @@ return null;
         return null;
     }
 
+    Map<String, Object> SearchAlgUcs(ZerosSquareState initialState) {
+
+        Queue<ZerosSquareState> queue = new PriorityQueue<ZerosSquareState>();
+        Set<ZerosSquareState> visited = new HashSet<ZerosSquareState>();
+        Map<ZerosSquareState, ZerosSquareState> parent = new HashMap<>();
+
+        queue.add(initialState);
+        visited.add(initialState);
+        parent.put(initialState, null);
+
+        while (!queue.isEmpty()) {
+            ZerosSquareState current = queue.poll();
+
+
+            if (current.gameDone()) {
+
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("path", getSuccessPath(current, parent));
+                result.put("visitedCount", visited.size());
+                return result;
+
+
+            }
+
+            for (ZerosSquareState next : current.nextStates()) {
+                if (!visited.contains(next)) {
+                    visited.add(next);
+                    next.cost+=1;
+
+                    queue.add(next);
+                    parent.put(next, current);
+                }
+            }
+        }
+        return null;
+    }
+
 
     List<ZerosSquareState> getSuccessPath(ZerosSquareState gameDoneState, Map<ZerosSquareState, ZerosSquareState> parents) {
         List<ZerosSquareState> pathWin = new ArrayList<ZerosSquareState>();

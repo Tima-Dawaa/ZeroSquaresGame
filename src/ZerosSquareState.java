@@ -8,6 +8,7 @@ public class ZerosSquareState {
     List<ZerosSquareState> nextStates = new ArrayList<ZerosSquareState>();
     List<Character> direction = new ArrayList<>(Arrays.asList('w', 's', 'a', 'd'));
 
+    int cost =1;
 
     public ZerosSquareState(Cell[][] initialGrid, List<ZerosSquarePlayers> players) {
         this.grid = initialGrid;
