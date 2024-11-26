@@ -4,6 +4,7 @@ public class ZeroSquaresGame {
     List<Cell[][]> levels = new ArrayList<>();
     List<List<ZerosSquarePlayers>> levelPlayers = new ArrayList<>();
     int currentLevel = 0;
+    private Map<String, Object> result;
 
     public ZeroSquaresGame() {
         char[][] level2 = new char[][]{
@@ -130,7 +131,7 @@ public class ZeroSquaresGame {
     }
 
 
-    Map<String, Object> SearchAlgBfs(ZerosSquareState initialState) {
+    Map<String, Object> searchAlgBfs(ZerosSquareState initialState) {
         Queue<ZerosSquareState> queue = new LinkedList<ZerosSquareState>();
         Set<ZerosSquareState> visited = new HashSet<ZerosSquareState>();
         Map<ZerosSquareState, ZerosSquareState> parent = new HashMap<>();
@@ -165,7 +166,7 @@ public class ZeroSquaresGame {
 return null;
     }
 
-    Map<String, Object> SearchAlgDfs(ZerosSquareState initialState) {
+    Map<String, Object> searchAlgDfs(ZerosSquareState initialState) {
         Stack<ZerosSquareState> stack = new Stack<ZerosSquareState>();
         Set<ZerosSquareState> visited = new HashSet<ZerosSquareState>();
         Map<ZerosSquareState, ZerosSquareState> parent = new HashMap<>();
@@ -176,6 +177,7 @@ return null;
 
         while (!stack.isEmpty()) {
             ZerosSquareState current = stack.pop();
+
 
             if (current.gameDone()) {
 
@@ -189,7 +191,7 @@ return null;
             }
 
             for (ZerosSquareState next : current.nextStates()) {
-                if (!visited.contains(next)) {
+                if (!visited.contains(next)&& !next.lossGame()) {
                     visited.add(next);
                     stack.push(next);
                     parent.put(next, current);
@@ -199,7 +201,47 @@ return null;
         return null;
     }
 
-    Map<String, Object> SearchAlgUcs(ZerosSquareState initialState) {
+    Map<String, Object> searchAlgoDfsRecursive(ZerosSquareState initialState) {
+        Set<ZerosSquareState> visited = new HashSet<>();
+        Map<ZerosSquareState, ZerosSquareState> parent = new HashMap<>();
+        parent.put(initialState, null);
+        return dfsRecursive(initialState, visited, parent);
+    }
+
+    private Map<String, Object> dfsRecursive(ZerosSquareState currentState, Set<ZerosSquareState> visited, Map<ZerosSquareState, ZerosSquareState> parent) {
+        if(currentState.lossGame()){
+           return  null;
+        }
+        visited.add(currentState);
+
+        if (currentState.gameDone() ) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("path", getSuccessPath(currentState, parent));
+            result.put("visitedCount", visited.size());
+            return result;
+        }
+
+        for (ZerosSquareState nextState : currentState.nextStates()) {
+            if (!visited.contains(nextState)) {
+                parent.put(nextState, currentState);
+
+                Map<String, Object> result = dfsRecursive(nextState, visited, parent);
+
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+
+
+
+
+    Map<String, Object> searchAlgUcs(ZerosSquareState initialState) {
 
         Queue<ZerosSquareState> queue = new PriorityQueue<ZerosSquareState>(Comparator.comparingInt(ZerosSquareState::getCostWeights));
         Set<ZerosSquareState> visited = new HashSet<ZerosSquareState>();
@@ -238,6 +280,10 @@ return null;
         }
         return null;
     }
+
+
+
+
 
 
     List<ZerosSquareState> getSuccessPath(ZerosSquareState gameDoneState, Map<ZerosSquareState, ZerosSquareState> parents) {

@@ -211,10 +211,10 @@ public class ZerosSquareState {
             }
 
 
-            if (reachedWeakBlock) {
-                newState.lossGame();
-                return newState;
-            }
+//            if (reachedWeakBlock) {
+//                newState.lossGame();
+//                return newState;
+//            }
         }
 
         return newState;
@@ -245,9 +245,12 @@ public class ZerosSquareState {
 
         if (targetCell.type == CellType.WEAK_BLOCK) {
             System.out.println("Player reached WEAK_BLOCK at: (" + newI + ", " + newJ + ")");
+
             player.color = "#";
             player.i = newI;
             player.j = newJ;
+            newState.isLoss = true;
+            newState.lossGame();
             return true;
         }
 
