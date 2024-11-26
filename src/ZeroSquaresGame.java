@@ -201,10 +201,10 @@ return null;
 
     Map<String, Object> SearchAlgUcs(ZerosSquareState initialState) {
 
-        Queue<ZerosSquareState> queue = new PriorityQueue<ZerosSquareState>();
+        Queue<ZerosSquareState> queue = new PriorityQueue<ZerosSquareState>(Comparator.comparingInt(ZerosSquareState::getCostWeights));
         Set<ZerosSquareState> visited = new HashSet<ZerosSquareState>();
         Map<ZerosSquareState, ZerosSquareState> parent = new HashMap<>();
-
+        initialState.cost = 0;
         queue.add(initialState);
         visited.add(initialState);
         parent.put(initialState, null);
@@ -225,9 +225,11 @@ return null;
             }
 
             for (ZerosSquareState next : current.nextStates()) {
+                next.cost= current.getCostWeights()+1;
+                System.out.println(next.cost);//debug
                 if (!visited.contains(next)) {
                     visited.add(next);
-                    next.cost+=1;
+
 
                     queue.add(next);
                     parent.put(next, current);

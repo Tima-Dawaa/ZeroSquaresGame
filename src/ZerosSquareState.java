@@ -16,6 +16,10 @@ public class ZerosSquareState {
         this.isLoss = false;
     }
 
+
+    int getCostWeights (){
+        return cost;
+    }
     void print() {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
@@ -49,38 +53,25 @@ public class ZerosSquareState {
 
 
     String getPlayerColor(String color) {
-        switch (color.toLowerCase()) {
-            case "r":
-                return ConsoleColors.RED;
-            case "g":
-                return ConsoleColors.GREEN;
-            case "b":
-                return ConsoleColors.BLUE;
-            case "y":
-                return ConsoleColors.YELLOW;
-            case "p":
-                return ConsoleColors.PURPLE;
-
-            default:
-                return ConsoleColors.WHITE;
-        }
+        return switch (color.toLowerCase()) {
+            case "r" -> ConsoleColors.RED;
+            case "g" -> ConsoleColors.GREEN;
+            case "b" -> ConsoleColors.BLUE;
+            case "y" -> ConsoleColors.YELLOW;
+            case "p" -> ConsoleColors.PURPLE;
+            default -> ConsoleColors.WHITE;
+        };
     }
 
     String getCellColor(CellType type) {
-        switch (type) {
-            case BLOCK:
-                return ConsoleColors.BLACK_BOLD;
-            case FREE:
-                return ConsoleColors.WHITE_BOLD;
-            case GOAL:
-                return ConsoleColors.GREEN_BRIGHT;
-            case WEAK_FRAME:
-                return ConsoleColors.WHITE_BACKGROUND_BRIGHT;
-            case WEAK_BLOCK:
-                return ConsoleColors.BLUE_BACKGROUND_BRIGHT;
-            default:
-                return ConsoleColors.WHITE;
-        }
+        return switch (type) {
+            case BLOCK -> ConsoleColors.BLACK_BOLD;
+            case FREE -> ConsoleColors.WHITE_BOLD;
+            case GOAL -> ConsoleColors.GREEN_BRIGHT;
+            case WEAK_FRAME -> ConsoleColors.WHITE_BACKGROUND_BRIGHT;
+            case WEAK_BLOCK -> ConsoleColors.BLUE_BACKGROUND_BRIGHT;
+            default -> ConsoleColors.WHITE;
+        };
     }
 
 
