@@ -1,3 +1,5 @@
+//this class have the 6 grids for playing and intelligence search algorithms
+
 import java.util.*;
 
 public class ZeroSquaresGame {
@@ -130,6 +132,34 @@ public class ZeroSquaresGame {
         return cells;
     }
 
+    void runAllSearchAlgorithms(ZerosSquareState initialState) {
+        Map<String, Map<String, Object>> results = new LinkedHashMap<>();
+
+        results.put("Uniform Cost Search (UCS)", searchAlgUcs(initialState));
+        results.put("Breadth-First Search (BFS)", searchAlgBfs(initialState));
+        results.put("Depth-First Search (DFS)", searchAlgDfs(initialState));
+        results.put("A*",searchAlgAStar(initialState));
+
+        System.out.println("========================================");
+        System.out.println("           Search Algorithm Results      ");
+        System.out.println("========================================");
+
+        for (Map.Entry<String, Map<String, Object>> entry : results.entrySet()) {
+            String algorithmName = entry.getKey();
+            Map<String, Object> result = entry.getValue();
+
+            System.out.println("Algorithm: " + algorithmName);
+            if (result != null) {
+                System.out.println("    Path: " +((List<ZerosSquareState>) result.get("path")).size());
+                System.out.println("    Visited Nodes: " + result.get("visitedCount"));
+            } else {
+                System.out.println(" No solution found.");
+            }
+            System.out.println("----------------------------------------");
+        }
+    }
+
+
 
     Map<String, Object> searchAlgBfs(ZerosSquareState initialState) {
         Queue<ZerosSquareState> queue = new LinkedList<ZerosSquareState>();
@@ -145,8 +175,6 @@ public class ZeroSquaresGame {
 
             if (current.gameDone()) {
 
-//                int pathLength = getSuccessPath(current, parent).size();
-//                int visitedCount = visited.size();
                 Map<String, Object> result = new HashMap<>();
                 result.put("path", getSuccessPath(current, parent));
                 result.put("visitedCount", visited.size());
@@ -163,7 +191,7 @@ public class ZeroSquaresGame {
                 }
             }
         }
-return null;
+        return null;
     }
 
     Map<String, Object> searchAlgDfs(ZerosSquareState initialState) {
@@ -191,7 +219,7 @@ return null;
             }
 
             for (ZerosSquareState next : current.nextStates()) {
-                if (!visited.contains(next)&& !next.lossGame()) {
+                if (!visited.contains(next) && !next.lossGame()) {
                     visited.add(next);
                     stack.push(next);
                     parent.put(next, current);
@@ -209,12 +237,12 @@ return null;
     }
 
     private Map<String, Object> dfsRecursive(ZerosSquareState currentState, Set<ZerosSquareState> visited, Map<ZerosSquareState, ZerosSquareState> parent) {
-        if(currentState.lossGame()){
-           return  null;
+        if (currentState.lossGame()) {
+            return null;
         }
         visited.add(currentState);
 
-        if (currentState.gameDone() ) {
+        if (currentState.gameDone()) {
             Map<String, Object> result = new HashMap<>();
             result.put("path", getSuccessPath(currentState, parent));
             result.put("visitedCount", visited.size());
@@ -236,11 +264,6 @@ return null;
     }
 
 
-
-
-
-
-
     Map<String, Object> searchAlgUcs(ZerosSquareState initialState) {
 
         Queue<ZerosSquareState> queue = new PriorityQueue<ZerosSquareState>(Comparator.comparingInt(ZerosSquareState::getCostWeights));
@@ -248,13 +271,12 @@ return null;
         Map<ZerosSquareState, ZerosSquareState> parent = new HashMap<>();
         initialState.cost = 0;
         queue.add(initialState);
-        visited.add(initialState);
         parent.put(initialState, null);
 
         while (!queue.isEmpty()) {
             ZerosSquareState current = queue.poll();
 
-
+            visited.add(current);
             if (current.gameDone()) {
 
 
@@ -267,11 +289,12 @@ return null;
             }
 
             for (ZerosSquareState next : current.nextStates()) {
-                next.cost= current.getCostWeights()+1;
-                System.out.println(next.cost);//debug
-                if (!visited.contains(next)) {
-                    visited.add(next);
 
+                int newCost = current.cost + 1;
+
+                if (!visited.contains(next) || newCost < next.cost) {
+
+                    next.cost = newCost;
 
                     queue.add(next);
                     parent.put(next, current);
@@ -283,6 +306,44 @@ return null;
 
 
 
+
+    Map<String, Object> searchAlgAStar(ZerosSquareState initialState) {
+
+        Queue<ZerosSquareState> queue = new PriorityQueue<ZerosSquareState>(Comparator.comparingInt(ZerosSquareState::getCostStar));
+        Set<ZerosSquareState> visited = new HashSet<ZerosSquareState>();
+        Map<ZerosSquareState, ZerosSquareState> parent = new HashMap<>();
+
+
+        initialState.cost = 0;
+        queue.add(initialState);
+        parent.put(initialState, null);
+
+
+        while (!queue.isEmpty()) {
+            ZerosSquareState current = queue.poll();
+            visited.add(current);
+            if (current.gameDone()) {
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("path", getSuccessPath(current, parent));
+                result.put("visitedCount", visited.size());
+                return result;
+
+
+            }
+
+            for (ZerosSquareState next : current.nextStates()) {
+                int newCost = current.cost + next.cost;
+
+                if (!visited.contains(next) || newCost < next.cost) {
+                    next.cost = newCost;
+                    queue.add(next);
+                    parent.put(next, current);
+                }
+            }
+        }
+        return null;
+    }
 
 
 

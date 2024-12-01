@@ -1,3 +1,5 @@
+//Cell class : each cell has an  id that matches its type
+
 import java.util.Objects;
 
 public class Cell {

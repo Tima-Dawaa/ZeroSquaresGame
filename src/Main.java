@@ -9,23 +9,25 @@ public class Main {
 
 
         ZeroSquaresGame start = new ZeroSquaresGame();
-        Cell[][] initialGrid = start.levels.get(start.currentLevel+4);
-        List<ZerosSquarePlayers> initialPlayers = start.levelPlayers.get(start.currentLevel+4);
+        Cell[][] initialGrid = start.levels.get(start.currentLevel+2);
+        List<ZerosSquarePlayers> initialPlayers = start.levelPlayers.get(start.currentLevel+2);
 
         ZerosSquareState initialState = new ZerosSquareState(initialGrid, initialPlayers);
 
-        Map<String, Object> result = start.searchAlgoDfsRecursive(initialState);
+        start.runAllSearchAlgorithms(initialState);
 
-        if (result != null) {
+//        Map<String, Object> result = start.searchAlgAStar(initialState);
 
-
-            List<ZerosSquareState> path = (List<ZerosSquareState>) result.get("path");
-            for (ZerosSquareState state : path) {
-                state.print();
-                System.out.println();
-            }
-            System.out.println("Length of Success Path : "+ ((List<ZerosSquareState>) result.get("path")).size());
-            System.out.println("Visited Nodes Count: " + result.get("visitedCount"));
+//        if (result != null) {
+//
+//
+//            List<ZerosSquareState> path = (List<ZerosSquareState>) result.get("path");
+//            for (ZerosSquareState state : path) {
+//                state.print();
+//                System.out.println();
+//            }
+//            System.out.println("Length of Success Path : "+ ((List<ZerosSquareState>) result.get("path")).size());
+//            System.out.println("Visited Nodes Count: " + result.get("visitedCount"));
+//        }
         }
-    }
 }

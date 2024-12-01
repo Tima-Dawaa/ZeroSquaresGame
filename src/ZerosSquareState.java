@@ -1,3 +1,7 @@
+//class ZeroSquareState it represent the processing of game (logic cases) =>> the logic of game (like player win || check if game done(all the players win)|| the implementation of weak white frame or weak black frame
+// the move function its return new state after every new movement from the player
+
+
 import java.util.*;
 
 public class ZerosSquareState {
@@ -366,11 +370,58 @@ public class ZerosSquareState {
         return newState;
     }
 
+    int get_heuristic(){
+        int cost =0;
+        for(ZerosSquarePlayers player:players){
+            if(player.isGoalAchieved){
+                continue;
+            }
+            else{
+                int playerGoalRow= playerGoalRow(player.goalName);
+                int playerGoalColumn = playerGoalColumn(player.goalName);
+                if (playerGoalRow != -1 && playerGoalColumn != -1) {
+                    cost =cost+ Math.abs(player.i - playerGoalRow) + Math.abs(player.j - playerGoalColumn);
+                }
+            }
+        }
+
+        return  cost;
+    }
+    int playerGoalRow(String goalName){
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j].type == CellType.GOAL && grid[i][j].id.equals(goalName)) {
+                    return i;
+                }
+            }
+
+        }
+
+        return  -1;
+    }
+
+    int playerGoalColumn(String goalName ){
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j].type == CellType.GOAL && grid[i][j].id.equals(goalName)) {
+                    return j;
+                }
+            }
+
+        }
+        return -1;
+    }
+
+    int getCostStar(){
+        return  get_heuristic()+getCostWeights();
+    }
 
 
 
 
 }
+
+
 
 
 
