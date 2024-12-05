@@ -12,7 +12,8 @@ public class ZerosSquareState {
     List<ZerosSquareState> nextStates = new ArrayList<ZerosSquareState>();
     List<Character> direction = new ArrayList<>(Arrays.asList('w', 's', 'a', 'd'));
 
-    int cost =1;
+    int cost = 1;
+    int costOfMove = 0;
 
     public ZerosSquareState(Cell[][] initialGrid, List<ZerosSquarePlayers> players) {
         this.grid = initialGrid;
@@ -21,9 +22,10 @@ public class ZerosSquareState {
     }
 
 
-    int getCostWeights (){
+    int getCostWeights() {
         return cost;
     }
+
     void print() {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
@@ -248,7 +250,6 @@ public class ZerosSquareState {
         }
 
         if (targetCell.type == CellType.WEAK_BLOCK) {
-            System.out.println("Player reached WEAK_BLOCK at: (" + newI + ", " + newJ + ")");
 
             player.color = "#";
             player.i = newI;
@@ -270,7 +271,6 @@ public class ZerosSquareState {
 
             if (grid[player.i][player.j].type == CellType.GOAL &&
                     grid[player.i][player.j].id.equals(player.goalName)) {
-                System.out.println("Player " + player.color + " has reached their goal!");
                 grid[player.i][player.j].id = "f";
                 grid[player.i][player.j].type = CellType.FREE;
 
@@ -283,7 +283,6 @@ public class ZerosSquareState {
     boolean lossGame() {
         for (ZerosSquarePlayers player : players) {
             if (grid[player.i][player.j].type == CellType.WEAK_BLOCK) {
-                System.out.println(player.color + " has exited the grid because WEAKBLOCK");
                 isLoss = true;
                 return isLoss;
             }
@@ -302,6 +301,31 @@ public class ZerosSquareState {
         return true;
     }
 
+    int costOneMove(char direction) {
+        List<ZerosSquarePlayers> getOutWinners = new ArrayList<>();
+        for (ZerosSquarePlayers player1 : players) {
+            if (!player1.isGoalAchieved) {
+                getOutWinners.add(player1);
+            }
+        }
+        int count = 0;
+        for (ZerosSquarePlayers player : players) {
+            int targetI = player.i;
+            int targetJ = player.j;
+            while (isPathClear(player, targetI, targetJ, getOutWinners)) {
+                switch (direction) {
+                    case 'w' -> targetI -= 1;
+                    case 's' -> targetI += 1;
+                    case 'a' -> targetJ -= 1;
+                    case 'd' -> targetJ += 1;
+                }
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+
     Set<ZerosSquareState> nextStates() {
         Set<ZerosSquareState> nextStates = new HashSet<ZerosSquareState>();
 
@@ -309,13 +333,12 @@ public class ZerosSquareState {
             ZerosSquareState newState = this.move(direction.get(i));
             if (!newState.equals(this)) {
                 nextStates.add(newState);
+                newState.costOfMove = costOneMove(direction.get(i));
             }
 
         }
-//        System.out.println(nextStates.size());
-        return  nextStates;
+        return nextStates;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -342,7 +365,7 @@ public class ZerosSquareState {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.deepHashCode(grid), players, isLoss, sortPlayers, nextStates, direction);
+        return Objects.hash(Arrays.deepHashCode(grid), players, isLoss);
     }
 
     ZerosSquareState deepCopy() {
@@ -359,7 +382,6 @@ public class ZerosSquareState {
             newPlayers.add(new ZerosSquarePlayers(player));
         }
 
-
         ZerosSquareState newState = new ZerosSquareState(newGrid, newPlayers);
 
         newState.sortPlayers = new ArrayList<>();
@@ -370,24 +392,23 @@ public class ZerosSquareState {
         return newState;
     }
 
-    int get_heuristic(){
-        int cost =0;
-        for(ZerosSquarePlayers player:players){
-            if(player.isGoalAchieved){
+    int get_heuristic() {
+        int cost = 0;
+        for (ZerosSquarePlayers player : players) {
+            if (player.isGoalAchieved||cleanResult()) {
                 continue;
             }
-            else{
-                int playerGoalRow= playerGoalRow(player.goalName);
-                int playerGoalColumn = playerGoalColumn(player.goalName);
-                if (playerGoalRow != -1 && playerGoalColumn != -1) {
-                    cost =cost+ Math.abs(player.i - playerGoalRow) + Math.abs(player.j - playerGoalColumn);
-                }
+            int playerGoalRow = playerGoalRow(player.goalName);
+            int playerGoalColumn = playerGoalColumn(player.goalName);
+            if (playerGoalRow != -1 && playerGoalColumn != -1) {
+                cost = cost + Math.abs(player.i - playerGoalRow) + Math.abs(player.j - playerGoalColumn);
             }
         }
 
-        return  cost;
+        return cost;
     }
-    int playerGoalRow(String goalName){
+
+    int playerGoalRow(String goalName) {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j].type == CellType.GOAL && grid[i][j].id.equals(goalName)) {
@@ -397,10 +418,10 @@ public class ZerosSquareState {
 
         }
 
-        return  -1;
+        return -1;
     }
 
-    int playerGoalColumn(String goalName ){
+    int playerGoalColumn(String goalName) {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j].type == CellType.GOAL && grid[i][j].id.equals(goalName)) {
@@ -412,13 +433,30 @@ public class ZerosSquareState {
         return -1;
     }
 
-    int getCostStar(){
-        return  get_heuristic()+getCostWeights();
+    int getCostStar() {
+        return get_heuristic() + getCostWeights();
     }
 
+    boolean cleanResult() {
+        if (lossGame()) return true;
 
 
+        for (ZerosSquarePlayers player : players) {
+            int countGoals = 0;
+            String color = player.goalName;
 
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[i].length; j++) {
+                    if (grid[i][j].id.equals(color)) {
+                        countGoals++;
+
+                    }
+                }
+            }
+            if (countGoals == 2) return true;
+        }
+        return false;
+    }
 }
 
 

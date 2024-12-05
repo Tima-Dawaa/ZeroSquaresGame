@@ -12,7 +12,7 @@ public class Cell {
 
     public Cell(Cell newCellCopy) {
         this.type = newCellCopy.type;
-        this.id = new String(newCellCopy.id);
+        this.id = newCellCopy.id;
     }
 
 

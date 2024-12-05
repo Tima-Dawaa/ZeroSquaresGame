@@ -23,9 +23,9 @@ public class ZerosSquarePlayers {
     public ZerosSquarePlayers(ZerosSquarePlayers newPlayersCopy) {
         this.i = newPlayersCopy.i;
         this.j = newPlayersCopy.j;
-        this.color = new String(newPlayersCopy.color);
+        this.color = newPlayersCopy.color;
         this.isGoalAchieved = newPlayersCopy.isGoalAchieved;
-        this.goalName = new String(newPlayersCopy.goalName);
+        this.goalName = newPlayersCopy.goalName;
     }
 
 
